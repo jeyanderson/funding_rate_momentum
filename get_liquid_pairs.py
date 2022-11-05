@@ -1,6 +1,5 @@
 import ccxt
 import pandas as pd
-from datetime import datetime,timedelta
 
 ftx=ccxt.ftx({
             "apiKey":'apiKey',
@@ -15,18 +14,12 @@ def get_liquid_symbols():
     markets=ftx.load_markets()
     markets=pd.DataFrame(markets)
     markets=markets.T
-    markets=markets[markets['id'].str.contains('PERP')]
+    markets=markets[markets['id'].str.contains('-PERP')]
     symbols=markets['id'].to_list()
-    onehago=datetime.now()-timedelta(hours=6)
-    onehago=onehago.timestamp()*1000
     volumes=[]
     for symbol in symbols:
-        df=ftx.fetch_ohlcv(symbol,timeframe=tf,since=onehago,limit=5)
-        df=pd.DataFrame(df)
-        df.columns=['timestamp','open','high','low','close','volume']
-        df['timestamp']=[datetime.fromtimestamp((x/1000)) for x in df['timestamp']]
-        df=df.set_index('timestamp')
-        volumes.append(df['volume'].median())
+        df=ftx.fetch_ticker(symbol)
+        volumes.append(df['quoteVolume'])
     volumes=pd.DataFrame(volumes)
     quantile=volumes.quantile(.75)
     quantile=quantile[0]
