@@ -14,9 +14,9 @@ ftx=ccxt.ftx({
 tf='1h'
 symbols=getLiquidSymbols()
 
-def getBestFr(hours_val):
+def getBestFr(hoursVal):
     frLst=[]
-    onehago=datetime.now()-timedelta(hours=hours_val)
+    onehago=datetime.now()-timedelta(hours=hoursVal)
     onehago=onehago.replace(second=0, microsecond=0, minute=0, hour=onehago.hour)+timedelta(hours=onehago.minute//30)
     onehago=onehago.timestamp()*1000
     for symbol in symbols:
